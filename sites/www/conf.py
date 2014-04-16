@@ -12,6 +12,11 @@ extensions.append('releases')
 releases_release_uri = "https://github.com/paramiko/paramiko/tree/v%s"
 releases_issue_uri = "https://github.com/paramiko/paramiko/issues/%s"
 
+# Blog extension
+extensions.append('sphinxblog')
+rss_link = 'http://paramiko.org'
+rss_description = 'Paramiko project news'
+
 # Intersphinx for referencing API/usage docs
 extensions.append('sphinx.ext.intersphinx')
 # Default is 'local' building, but reference the public docs site when building
