@@ -1,4 +1,4 @@
-from os import mkdir
+from os import mkdir, environ
 from os.path import join
 from shutil import rmtree, copytree
 
@@ -28,6 +28,10 @@ www = Collection.from_module(_docs, name='www', config={
 # Until we move to spec-based testing
 @task
 def test(ctx):
+    # Clean any inbound SSH agents, which otherwise trickle down into the test
+    # process and add verbosity to test debugging.
+    environ.pop('SSH_AUTH_SOCK', None)
+    # Run ze tests. Just shell out for now...
     ctx.run("python test.py --verbose")
 
 @task
