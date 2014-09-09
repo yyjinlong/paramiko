@@ -112,13 +112,17 @@ class SSHClientTest (unittest.TestCase):
         """
         (Most) kwargs get passed directly into SSHClient.connect().
 
-        The exceptions are as follows, which are stripped from the kwargs:
+        The exceptions are as follows, which are stripped from the kwargs and
+        handed to the server setup function instead:
 
         * ``allowed_keys`` which is handed to the ``NullServer`` used for
           testing, acting like an ``authorized_keys`` list.
         * ``host_key`` which is a ``PKey`` instance used by the server
           transport for host authentication, and whose public-key component is
           used by the client for same.
+
+        Also of note is that the client connection kwarg ``username`` defaults
+        to 'slowdive' but may be overridden.
         """
         run_kwargs = {
             'allowed_keys': kwargs.pop('allowed_keys', None),
@@ -138,7 +142,8 @@ class SSHClientTest (unittest.TestCase):
         )
 
         # Actual connection
-        self.tc.connect(self.addr, self.port, username='slowdive', **kwargs)
+        kwargs.setdefault('username', 'slowdive')
+        self.tc.connect(self.addr, self.port, **kwargs)
 
         # Authentication successful?
         self.event.wait(1.0)
