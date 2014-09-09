@@ -92,12 +92,16 @@ class SSHClientTest (unittest.TestCase):
             if hasattr(self, attr):
                 getattr(self, attr).close()
 
-    def _run(self, allowed_keys=None, delay=0):
+    def _default_host_key(self):
+        return paramiko.RSAKey.from_private_key_file(test_path('test_rsa.key'))
+
+    def _run(self, allowed_keys=None, host_key=None, delay=0):
         if allowed_keys is None:
             allowed_keys = FINGERPRINTS.keys()
         self.socks, addr = self.sockl.accept()
         self.ts = paramiko.Transport(self.socks)
-        host_key = paramiko.RSAKey.from_private_key_file(test_path('test_rsa.key'))
+        if host_key is None:
+            host_key = self._default_host_key()
         self.ts.add_server_key(host_key)
         server = NullServer(allowed_keys=allowed_keys)
         if delay:
@@ -108,18 +112,30 @@ class SSHClientTest (unittest.TestCase):
         """
         (Most) kwargs get passed directly into SSHClient.connect().
 
-        The exception is ``allowed_keys`` which is stripped and handed to the
-        ``NullServer`` used for testing.
+        The exceptions are as follows, which are stripped from the kwargs:
+
+        * ``allowed_keys`` which is handed to the ``NullServer`` used for
+          testing, acting like an ``authorized_keys`` list.
+        * ``host_key`` which is a ``PKey`` instance used by the server
+          transport for host authentication, and whose public-key component is
+          used by the client for same.
         """
-        run_kwargs = {'allowed_keys': kwargs.pop('allowed_keys', None)}
+        run_kwargs = {
+            'allowed_keys': kwargs.pop('allowed_keys', None),
+            'host_key': kwargs.pop('host_key', None),
+        }
         # Server setup
         threading.Thread(target=self._run, kwargs=run_kwargs).start()
-        host_key = paramiko.RSAKey.from_private_key_file(test_path('test_rsa.key'))
-        public_host_key = paramiko.RSAKey(data=host_key.asbytes())
+        host_key = run_kwargs['host_key'] or self._default_host_key()
+        public_host_key = host_key.__class__(data=host_key.asbytes())
 
         # Client setup
         self.tc = paramiko.SSHClient()
-        self.tc.get_host_keys().add('[%s]:%d' % (self.addr, self.port), 'ssh-rsa', public_host_key)
+        self.tc.get_host_keys().add(
+            '[%s]:%d' % (self.addr, self.port),
+            public_host_key.get_name(),
+            public_host_key
+        )
 
         # Actual connection
         self.tc.connect(self.addr, self.port, username='slowdive', **kwargs)
