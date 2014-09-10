@@ -386,6 +386,33 @@ class SSHClient (object):
         """
         return self._transport
 
+    def _pubkey_auth(self, username, pkey, two_factor, allowed_types,
+        saved_exception, try_msg):
+        """
+        Public key auth helper.
+
+        Takes username, key, current two_factor auth status, current
+        allowed_types list, current saved exception, and log message templates;
+        attempts to authenticate; returns three-tuple of (two_factor,
+        allowed_types, saved_exception).
+
+        The intent (pending refactor of _auth()) is to reassign those values to
+        their outer names upon function return.
+        """
+        try:
+            self._log(DEBUG, try_msg % hexlify(pkey.get_fingerprint()))
+            allowed_types = self._transport.auth_publickey(username, pkey)
+            self._log(DEBUG, "Key auth successful!")
+            two_factor = (allowed_types == ['password'])
+            if not two_factor:
+                self._log(DEBUG, "No two-factor auth requested, done authenticating.")
+            else:
+                self._log(DEBUG, "Two-factor auth requested, continuing")
+        except SSHException as e:
+            self._log(DEBUG, "Caught %r, continuing" % (e,))
+            saved_exception = e
+        return two_factor, saved_exception
+
     def _auth(self, username, password, pkey, key_filenames, allow_agent,
               look_for_keys, gss_auth, gss_kex, gss_deleg_creds, gss_host):
         """
@@ -408,9 +435,11 @@ class SSHClient (object):
         # authentication with gssapi-keyex.
         if gss_kex and self._transport.gss_kex_used:
             try:
+                self._log(DEBUG, "GSS-API kex seems to have occurred, trying GSS-API authentication with username %r" % username)
                 self._transport.auth_gssapi_keyex(username)
                 return
             except Exception as e:
+                self._log(DEBUG, "Caught %r, continuing" % (e,))
                 saved_exception = e
 
         # Try GSS-API authentication (gssapi-with-mic) only if GSS-API Key
@@ -419,34 +448,39 @@ class SSHClient (object):
         # why should we do that again?
         if gss_auth:
             try:
+                self._log(DEBUG, "GSS-API kex has not occurred but GSS-API authentication was requested, trying 'gssapi-with-mic' auth with usrname %r, host %r and delegation creds %r" % (usrname, gss_host, gss_deleg_creds))
                 self._transport.auth_gssapi_with_mic(username, gss_host,
                                                      gss_deleg_creds)
                 return
             except Exception as e:
+                self._log(DEBUG, "Caught %r, continuing" % (e,))
                 saved_exception = e
 
         if pkey is not None:
-            try:
-                self._log(DEBUG, 'Trying SSH key %s' % hexlify(pkey.get_fingerprint()))
-                allowed_types = self._transport.auth_publickey(username, pkey)
-                two_factor = (allowed_types == ['password'])
-                if not two_factor:
-                    return
-            except SSHException as e:
-                saved_exception = e
+            two_factor, allowed_types, saved_exception = self._pubkey_auth(
+                username, pkey, two_factor, allowed_types, saved_exception,
+                "Trying explicitly given SSH key %s"
+            )
 
         if not two_factor:
+            if key_filenames:
+                self._log(DEBUG, "Trying explicitly given keys from filenames...")
             for key_filename in key_filenames:
                 for pkey_class in (RSAKey, DSSKey, ECDSAKey):
                     try:
                         key = pkey_class.from_private_key_file(key_filename, password)
-                        self._log(DEBUG, 'Trying key %s from %s' % (hexlify(key.get_fingerprint()), key_filename))
+                        self._log(DEBUG, 'Trying key %s from %s via %r' % (hexlify(key.get_fingerprint()), key_filename, pkey_class))
                         self._transport.auth_publickey(username, key)
+                        self._log(DEBUG, "Key auth successful!")
                         two_factor = (allowed_types == ['password'])
                         if not two_factor:
+                            self._log(DEBUG, "No two-factor auth requested, done authenticating.")
                             return
+                        else:
+                            self._log(DEBUG, "Two-factor auth requested, continuing")
                         break
                     except SSHException as e:
+                        self._log(DEBUG, "Caught %r, continuing" % (e,))
                         saved_exception = e
 
         if not two_factor and allow_agent:
