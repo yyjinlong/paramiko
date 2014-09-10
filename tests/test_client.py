@@ -149,7 +149,8 @@ class SSHClientTest (unittest.TestCase):
         self.event.wait(1.0)
         self.assertTrue(self.event.isSet())
         self.assertTrue(self.ts.is_active())
-        self.assertEqual('slowdive', self.ts.get_username())
+        if kwargs['username'] is not None:
+            self.assertEqual(kwargs['username'], self.ts.get_username())
         self.assertEqual(True, self.ts.is_authenticated())
 
         # Command execution functions?
