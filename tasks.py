@@ -32,7 +32,7 @@ def test(ctx):
     # process and add verbosity to test debugging.
     environ.pop('SSH_AUTH_SOCK', None)
     # Run ze tests. Just shell out for now...
-    ctx.run("python test.py --verbose")
+    ctx.run("python test.py --verbose", pty=True)
 
 @task
 def coverage(ctx):
