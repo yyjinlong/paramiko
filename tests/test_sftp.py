@@ -676,6 +676,20 @@ class SFTPTest (unittest.TestCase):
             self.fail('exception ' + str(e))
         sftp.unlink(b(FOLDER) + utf8_folder)
 
+    def test_encoding_errors_replaced(self):
+        """
+        verify that string decode errors get replaced in listdir_*
+        """
+        badpath = FOLDER + '/badfilename-\xff'
+        with sftp.open(badpath, 'w') as f:
+            f.write('okay')
+
+        try:
+            sftp.listdir_attr(FOLDER)
+        except Exception as e:
+            self.fail('exception ' + str(e))
+        sftp.unlink(badpath)
+
     def test_L_utf8_chdir(self):
         sftp.mkdir(FOLDER + '/' + unicode_folder)
         try:
