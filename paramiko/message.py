@@ -171,11 +171,17 @@ class Message (object):
         """
         return self.get_bytes(self.get_int())
 
-    def get_text(self):
+    def get_text(self, errors=None):
         """
         Fetch a Unicode string from the stream.
+
+        :param str errors:
+            String decoding error handler to use.
+
+            Default: ``None``.
         """
-        return u(self.get_string())
+        data = self.get_string()
+        return u(data, errors=errors)
 
     def get_binary(self):
         """
