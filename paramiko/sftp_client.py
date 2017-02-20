@@ -204,9 +204,12 @@ class SFTPClient(BaseSFTP, ClosingContextManager):
             if t != CMD_NAME:
                 raise SFTPError('Expected name response')
             count = msg.get_int()
+            # Replace encoding errors instead of exploding - better a garbled
+            # filename than an abort. Re #546.
+            kwargs = {'errors': 'replace'}
             for i in range(count):
-                filename = msg.get_text()
-                longname = msg.get_text()
+                filename = msg.get_text(**kwargs)
+                longname = msg.get_text(**kwargs)
                 attr = SFTPAttributes._from_msg(msg, filename, longname)
                 if (filename != '.') and (filename != '..'):
                     filelist.append(attr)
@@ -262,9 +265,12 @@ class SFTPClient(BaseSFTP, ClosingContextManager):
                         if t == CMD_STATUS:
                             self._convert_status(msg)
                     count = msg.get_int()
+                    # Replace encoding errors; see similar comment in
+                    # listdir_attrs().
+                    kwargs = {'errors': 'replace'}
                     for i in range(count):
-                        filename = msg.get_text()
-                        longname = msg.get_text()
+                        filename = msg.get_text(**kwargs)
+                        longname = msg.get_text(**kwargs)
                         attr = SFTPAttributes._from_msg(
                             msg, filename, longname)
                         if (filename != '.') and (filename != '..'):

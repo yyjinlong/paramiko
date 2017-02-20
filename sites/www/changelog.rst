@@ -2,6 +2,10 @@
 Changelog
 =========
 
+* :bug:`546` Prevent explosions with non-UTF-8 compatible SFTP filenames by
+  leveraging the ``errors='replace'`` functionality of Python's string
+  encoding/decoding. Thanks to ``@larswirzenius`` for the report and Niklas B
+  for a suggested workaround.
 * :bug:`895` Fix a bug in server-mode concerning multiple interactive auth
   steps (which were incorrectly responded to). Thanks to Dennis Kaarsemaker for
   catch & patch.
