@@ -49,14 +49,11 @@ if PY2:
 
     def u(s, encoding='utf8'):  # NOQA
         """cast bytes or unicode to unicode"""
-        if isinstance(s, str):
-            return s.decode(encoding)
-        elif isinstance(s, unicode):
+        if isinstance(s, unicode):
             return s
-        elif isinstance(s, buffer):
-            return s.decode(encoding)
-        else:
+        if not isinstance(s, (str, buffer)):
             raise TypeError("Expected unicode or bytes, got %r" % s)
+        return s.decode(encoding)
 
 
     def b2s(s):
