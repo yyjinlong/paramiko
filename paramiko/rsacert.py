@@ -11,16 +11,21 @@ from paramiko.ssh_exception import SSHException
 
 class RSACert(RSAKey):
     """
-    Certificate equivalent of RSAKey
-    See the `official SSH certificate format specification
-    <http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.certkeys?rev=1.9&content-type=text/x-cvsweb-markup>`_
+    Certificate-bearing form of `.RSAKey`, compatible with OpenSSH 5.4+.
 
-    OpenSSH versions newer than 5.4 support certificate-based authentication,
-    which can simplify authentication without relying upon heavy-weight
-    services such as LDAP. A good introductory guide to SSH certificates can
-    be found here:
+    Where `.RSAKey` requires only the private key material to operate,
+    `RSACert` requires both the private key *and* a signed
+    (public-key-wrapping) certificate file. For details on the format of
+    certificate files, see the `official SSH certificate format specification
+    <http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.certkeys?rev=HEAD>`_.
 
-    https://www.digitalocean.com/community/tutorials/how-to-create-an-ssh-ca-to-validate-hosts-and-clients-with-ubuntu
+    Certificate-based authentication can simplify authentication without
+    relying upon heavy-weight services such as LDAP. A good (if slightly dated,
+    though the basics remain the same) introductory guide to SSH certificates
+    can be found in `this DigitalOcean community tutorial
+    <https://www.digitalocean.com/community/tutorials/how-to-create-an-ssh-ca-to-validate-hosts-and-clients-with-ubuntu>`_.
+
+    .. versionadded:: 2.3
     """
 
     def __init__(self,
