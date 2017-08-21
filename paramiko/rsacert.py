@@ -23,9 +23,15 @@ class RSACert(RSAKey):
     https://www.digitalocean.com/community/tutorials/how-to-create-an-ssh-ca-to-validate-hosts-and-clients-with-ubuntu
     """
 
-    def __init__(self, msg=None, data=None, privkey_filename=None,
-                 cert_filename=None, password=None, privkey_file_obj=None,
-                 cert_file_obj=None):
+    def __init__(self,
+        msg=None,
+        data=None,
+        privkey_filename=None,
+        cert_filename=None,
+        password=None,
+        privkey_file_obj=None,
+        cert_file_obj=None,
+    ):
         self.nonce = None
         self.key = None
         self.serial = None

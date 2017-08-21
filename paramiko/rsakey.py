@@ -37,8 +37,15 @@ class RSAKey(PKey):
     data.
     """
 
-    def __init__(self, msg=None, data=None, filename=None, password=None,
-                 key=None, file_obj=None):
+    def __init__(
+        self,
+        msg=None,
+        data=None,
+        filename=None,
+        password=None,
+        key=None,
+        file_obj=None,
+    ):
         self.key = None
         if file_obj is not None:
             self._from_private_key(file_obj, password)
