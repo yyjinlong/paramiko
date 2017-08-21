@@ -17,7 +17,7 @@ PUB_RSA_CERT = 'ssh-rsa-cert-v01@openssh.com AAAAHHNzaC1yc2EtY2VydC12MDFAb3BlbnN
 
 
 class RSACertTests(unittest.TestCase):
-    def test_load_rsa_cert(self):
+    def test_load(self):
         cert = RSACert(
             filename=test_path('test_rsa.key'),
             cert_file_obj=StringIO(PUB_RSA_CERT),
@@ -29,7 +29,7 @@ class RSACertTests(unittest.TestCase):
         )
         self.assertTrue(cert.verify_certificate_signature())
 
-    def test_load_rsa_cert_password(self):
+    def test_load_with_password(self):
         cert = RSACert(
             filename=test_path('test_rsa_password.key'),
             cert_file_obj=StringIO(PUB_RSA_CERT),
@@ -42,7 +42,7 @@ class RSACertTests(unittest.TestCase):
         )
         self.assertTrue(cert.verify_certificate_signature())
 
-    def test_sign_rsa_cert(self):
+    def test_sign(self):
         cert = RSACert(
             filename=test_path('test_rsa.key'),
             cert_file_obj=StringIO(PUB_RSA_CERT),
@@ -59,7 +59,7 @@ class RSACertTests(unittest.TestCase):
         pub = cert.get_public_key()
         self.assertTrue(pub.verify_ssh_sig(b'ice weasels', msg))
 
-    def test_compare_rsa_cert(self):
+    def test_compare(self):
         cert_with_private_key = RSACert(
             filename=test_path('test_rsa.key'),
             cert_file_obj=StringIO(PUB_RSA_CERT),
