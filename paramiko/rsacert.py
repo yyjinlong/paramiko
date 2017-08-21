@@ -25,6 +25,18 @@ class RSACert(RSAKey):
     can be found in `this DigitalOcean community tutorial
     <https://www.digitalocean.com/community/tutorials/how-to-create-an-ssh-ca-to-validate-hosts-and-clients-with-ubuntu>`_.
 
+    .. note::
+        For all parameters besides those documented here, see `.RSAKey`; they
+        are identical.
+
+    :param str cert_filename:
+        Path to certificate file. Must be given if ``cert_file_obj`` is not
+        given.
+
+    :param str cert_file_obj:
+        File-like object containing certificate data. Must be given if
+        ``cert_filename`` is not given.
+
     .. versionadded:: 2.3
     """
 
