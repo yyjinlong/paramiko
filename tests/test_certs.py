@@ -18,31 +18,42 @@ PUB_RSA_CERT = 'ssh-rsa-cert-v01@openssh.com AAAAHHNzaC1yc2EtY2VydC12MDFAb3BlbnN
 
 class RSACertTests(unittest.TestCase):
     def test_load_rsa_cert(self):
-        cert = RSACert(filename=test_path('test_rsa.key'),
-                       cert_file_obj=StringIO(PUB_RSA_CERT))
+        cert = RSACert(
+            filename=test_path('test_rsa.key'),
+            cert_file_obj=StringIO(PUB_RSA_CERT),
+        )
         self.assertEqual('ssh-rsa-cert-v01@openssh.com', cert.get_name())
-        self.assertEqual(PUB_RSA.split()[1],
-                         cert.get_public_key().get_base64())
+        self.assertEqual(
+            PUB_RSA.split()[1],
+            cert.get_public_key().get_base64(),
+        )
         self.assertTrue(cert.verify_certificate_signature())
 
     def test_load_rsa_cert_password(self):
-        cert = RSACert(filename=test_path('test_rsa_password.key'),
-                       cert_file_obj=StringIO(PUB_RSA_CERT),
-                       password='television')
+        cert = RSACert(
+            filename=test_path('test_rsa_password.key'),
+            cert_file_obj=StringIO(PUB_RSA_CERT),
+            password='television',
+        )
         self.assertEqual('ssh-rsa-cert-v01@openssh.com', cert.get_name())
-        self.assertEqual(PUB_RSA.split()[1],
-                         cert.get_public_key().get_base64())
+        self.assertEqual(
+            PUB_RSA.split()[1],
+            cert.get_public_key().get_base64(),
+        )
         self.assertTrue(cert.verify_certificate_signature())
 
     def test_sign_rsa_cert(self):
-        cert = RSACert(filename=test_path('test_rsa.key'),
-                       cert_file_obj=StringIO(PUB_RSA_CERT))
+        cert = RSACert(
+            filename=test_path('test_rsa.key'),
+            cert_file_obj=StringIO(PUB_RSA_CERT),
+        )
         msg = cert.sign_ssh_data(b'ice weasels')
         self.assertTrue(type(msg) is Message)
         msg.rewind()
         self.assertEqual('ssh-rsa', msg.get_text())
         sig = bytes().join(
-            [byte_chr(int(x, 16)) for x in SIGNED_RSA.split(':')])
+            [byte_chr(int(x, 16)) for x in SIGNED_RSA.split(':')]
+        )
         self.assertEqual(sig, msg.get_binary())
         msg.rewind()
         pub = cert.get_public_key()
@@ -51,14 +62,17 @@ class RSACertTests(unittest.TestCase):
     def test_compare_rsa_cert(self):
         cert_with_private_key = RSACert(
             filename=test_path('test_rsa.key'),
-            cert_file_obj=StringIO(PUB_RSA_CERT))
+            cert_file_obj=StringIO(PUB_RSA_CERT),
+        )
         cert_without_private_key = RSACert(
-            cert_file_obj=StringIO(PUB_RSA_CERT))
-
+            cert_file_obj=StringIO(PUB_RSA_CERT)
+        )
         self.assertTrue(cert_with_private_key.can_sign())
         self.assertFalse(cert_without_private_key.can_sign())
-        self.assertEqual(cert_with_private_key.get_public_key(),
-                         cert_without_private_key.get_public_key())
+        self.assertEqual(
+            cert_with_private_key.get_public_key(),
+            cert_without_private_key.get_public_key(),
+        )
 
 
 if __name__ == '__main__':
