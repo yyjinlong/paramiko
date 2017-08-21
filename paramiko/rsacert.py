@@ -31,10 +31,11 @@ class RSACert(RSAKey):
     def __init__(self,
         msg=None,
         data=None,
-        privkey_filename=None,
-        cert_filename=None,
+        filename=None,
         password=None,
-        privkey_file_obj=None,
+        key=None,
+        file_obj=None,
+        cert_filename=None,
         cert_file_obj=None,
     ):
         self.nonce = None
@@ -62,23 +63,29 @@ class RSACert(RSAKey):
             raise SSHException(
                 'Either a data object or a certificate file must be given')
 
-        if privkey_file_obj is not None:
-            self._from_private_key(privkey_file_obj, password)
-        elif privkey_filename is not None:
-            self._from_private_key_file(privkey_filename, password)
+        # TODO: can't we defer most of this to parent
+        if file_obj is not None:
+            self._from_private_key(file_obj, password)
+        elif filename is not None:
+            self._from_private_key_file(filename, password)
 
-        if (msg is None) and (data is not None):
+        # Normalize to a Message, since certificate files are by definition
+        # stored in message format, even on-disk.
+        if msg is None and data is not None:
             msg = Message(data)
-
         if msg is None:
+            # TODO: better exception, unless RSAKey does exactly this too
             raise SSHException('Key object may not be empty')
         if msg.get_text() != 'ssh-rsa-cert-v01@openssh.com':
+            # TODO: ditto
             raise SSHException('Invalid key')
 
+        # From here, we are simply following the RFC's defined message format
         self.nonce = msg.get_string()
 
         e = msg.get_mpint()
         n = msg.get_mpint()
+        # TODO: bail out if self.key was given & its public numbers != ours!
         # Key might've been set by a private key file. If not, set it from the
         # cert
         if self.key is None:

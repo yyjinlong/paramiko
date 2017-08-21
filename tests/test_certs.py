@@ -18,7 +18,7 @@ PUB_RSA_CERT = 'ssh-rsa-cert-v01@openssh.com AAAAHHNzaC1yc2EtY2VydC12MDFAb3BlbnN
 
 class RSACertTests(unittest.TestCase):
     def test_load_rsa_cert(self):
-        cert = RSACert(privkey_filename=test_path('test_rsa.key'),
+        cert = RSACert(filename=test_path('test_rsa.key'),
                        cert_file_obj=StringIO(PUB_RSA_CERT))
         self.assertEqual('ssh-rsa-cert-v01@openssh.com', cert.get_name())
         self.assertEqual(PUB_RSA.split()[1],
@@ -26,7 +26,7 @@ class RSACertTests(unittest.TestCase):
         self.assertTrue(cert.verify_certificate_signature())
 
     def test_load_rsa_cert_password(self):
-        cert = RSACert(privkey_filename=test_path('test_rsa_password.key'),
+        cert = RSACert(filename=test_path('test_rsa_password.key'),
                        cert_file_obj=StringIO(PUB_RSA_CERT),
                        password='television')
         self.assertEqual('ssh-rsa-cert-v01@openssh.com', cert.get_name())
@@ -35,7 +35,7 @@ class RSACertTests(unittest.TestCase):
         self.assertTrue(cert.verify_certificate_signature())
 
     def test_sign_rsa_cert(self):
-        cert = RSACert(privkey_filename=test_path('test_rsa.key'),
+        cert = RSACert(filename=test_path('test_rsa.key'),
                        cert_file_obj=StringIO(PUB_RSA_CERT))
         msg = cert.sign_ssh_data(b'ice weasels')
         self.assertTrue(type(msg) is Message)
@@ -50,7 +50,7 @@ class RSACertTests(unittest.TestCase):
 
     def test_compare_rsa_cert(self):
         cert_with_private_key = RSACert(
-            privkey_filename=test_path('test_rsa.key'),
+            filename=test_path('test_rsa.key'),
             cert_file_obj=StringIO(PUB_RSA_CERT))
         cert_without_private_key = RSACert(
             cert_file_obj=StringIO(PUB_RSA_CERT))
