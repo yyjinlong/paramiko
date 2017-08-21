@@ -13,10 +13,10 @@ class RSACert(RSAKey):
     """
     Certificate-bearing form of `.RSAKey`, compatible with OpenSSH 5.4+.
 
-    Where `.RSAKey` requires only the private key material to operate,
-    `RSACert` requires both the private key *and* a signed
-    (public-key-wrapping) certificate file. For details on the format of
-    certificate files, see the `official SSH certificate format specification
+    Where `.RSAKey` requires public or private key material to operate,
+    `RSACert` may take just certificate data, or certificate data plus
+    (private) key data. For details on the format of certificate files, see the
+    `official SSH certificate format specification
     <http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.certkeys?rev=HEAD>`_.
 
     Certificate-based authentication can simplify authentication without
@@ -27,7 +27,8 @@ class RSACert(RSAKey):
 
     .. note::
         For all parameters besides those documented here, see `.RSAKey`; they
-        are identical.
+        are identical. Thus, ``filename`` and ``file_obj`` (for example) are
+        for private key data and **not** certificate data.
 
     :param str cert_filename:
         Path to certificate file. Must be given if ``cert_file_obj`` is not
