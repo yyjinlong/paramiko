@@ -78,10 +78,6 @@ class RSACertTests(unittest.TestCase):
         else:
             assert False, "Did not raise SSHException!"
 
-    def test_excepts_if_private_key_is_not_given(self):
-        # TODO: no pkey_filename, pkey_file_obj, or key
-        pass
-
     def test_excepts_if_only_public_key_is_given(self):
         # TODO: not 100% sure this should actually except tho
         # TODO: but, pkey_filename/pkey_file_obj/key are public-key material
