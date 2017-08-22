@@ -13,10 +13,19 @@ class RSACert(RSAKey):
     """
     Certificate-bearing form of `.RSAKey`, compatible with OpenSSH 5.4+.
 
-    Where `.RSAKey` requires public or private key material to operate,
-    `RSACert` may take just certificate data, or certificate data plus
-    (private) key data. For details on the format of certificate files, see the
-    `official SSH certificate format specification
+    This class may operate in two modes:
+
+    - Private-material-bearing combo object used for authentication _to_ the
+      remote end: i.e. you're a client and are using the private key to sign
+      the certificate before submitting it to the server. This is considered
+      the primary or common use case and is similar to using the OpenSSH client
+      with both a private key file and the corresponding certificate file.
+    - Public-material-only signed authentication of the remote end: i.e.,
+      you're a client and the `RSACert` instance represents the host
+      certificate; or vice versa.
+
+    For details on the format of certificate files, see the `official SSH
+    certificate format specification
     <http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.certkeys?rev=HEAD>`_.
 
     Certificate-based authentication can simplify authentication without
@@ -29,6 +38,16 @@ class RSACert(RSAKey):
         For all parameters besides those documented here, see `.RSAKey`; they
         are identical. Thus, ``filename`` and ``file_obj`` (for example) are
         for private key data and **not** certificate data.
+
+    :param msg:
+        A `.Message` object containing the certificate. Note that this
+        overrides the ``msg`` argument from the parent class (though as both
+        end up providing public key material, the effect is largely the same.)
+
+    :param data:
+        Binary data that can be used to instantiate a `.Message`. As with
+        ``msg``, this overrides the ``data`` kwarg of the parent class, and
+        must contain a full certificate and not just a public key.
 
     :param str cert_filename:
         Path to certificate file. Must be given if ``cert_file_obj`` is not
