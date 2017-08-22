@@ -104,10 +104,10 @@ class RSACert(RSAKey):
         elif cert_file_obj is not None:
             msg = self._load_cert(cert_file_obj)
         elif cert_filename is None and cert_file_obj is None and data is None:
-            raise SSHException(
-                'Either a data object or a certificate file must be given')
+            # TODO: this doesn't want to fire if msg= was given
+            err = 'Either a data object or a certificate file must be given'
+            raise SSHException(err)
 
-        # TODO: can't we defer most of this to parent
         if pkey_file_obj is not None:
             self._from_private_key(pkey_file_obj, password)
         elif pkey_filename is not None:
