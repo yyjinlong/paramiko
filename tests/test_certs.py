@@ -3,9 +3,11 @@ Tests around PKey-derived certificate identity files.
 """
 
 import unittest
+from itertools import product
 from paramiko.py3compat import StringIO
 
-from paramiko import Message
+from cryptography.hazmat.primitives.asymmetric import rsa
+from paramiko import Message, RSAKey
 from paramiko.py3compat import byte_chr
 from paramiko.rsacert import RSACert
 
@@ -17,30 +19,76 @@ PUB_RSA_CERT = 'ssh-rsa-cert-v01@openssh.com AAAAHHNzaC1yc2EtY2VydC12MDFAb3BlbnN
 
 
 class RSACertTests(unittest.TestCase):
-    def test_load_cert_from_file_obj_with_key_filename(self):
-        cert = RSACert(
-            filename=test_path('test_rsa.key'),
-            cert_file_obj=StringIO(PUB_RSA_CERT),
-        )
-        self.assertEqual('ssh-rsa-cert-v01@openssh.com', cert.get_name())
-        self.assertEqual(
-            PUB_RSA.split()[1],
-            cert.get_public_key().get_base64(),
-        )
-        self.assertTrue(cert.verify_certificate_signature())
+    def test_load_cert_and_key(self):
+        # Test matrix of most of the silly ways we currently support
+        # instantiating the object re: cert and key sources. Corner cases get
+        # their own tests below.
+        cert_kwargses = [
+            dict(cert_filename=test_path('test_rsa-cert.pub')),
+            dict(cert_file_obj=StringIO(PUB_RSA_CERT)),
+            # TODO: msg and data
+        ]
+        privkey_path = test_path('test_rsa.key')
+        privkey_pass_path = test_path('test_rsa_password.key')
+        key_kwargses = [
+            # Unprotected private key
+            dict(filename=privkey_path),
+            dict(file_obj=open(privkey_path)),
+            # Password-protected private key
+            dict(filename=privkey_pass_path, password='television'),
+            dict(file_obj=open(privkey_pass_path), password='television'),
+        ]
+        expected_pub_base64 = PUB_RSA.split()[1]
+        expected_privkey = RSAKey(filename=privkey_path)
+        for cert_kwargs, key_kwargs in product(cert_kwargses, key_kwargses):
+            # Build from union of kwargs
+            cert = RSACert(**dict(key_kwargs, **cert_kwargs))
+            # Make sure cert part looks good
+            self.assertEqual('ssh-rsa-cert-v01@openssh.com', cert.get_name())
+            self.assertEqual(
+                expected_pub_base64,
+                cert.get_public_key().get_base64(),
+            )
+            self.assertTrue(cert.verify_certificate_signature())
+            # Make sure key part instantiated OK
+            self.assertTrue(isinstance(cert.key, rsa.RSAPrivateKey))
+            self.assertEqual(
+                expected_privkey.key.private_numbers(),
+                cert.key.private_numbers(),
+            )
+            # Reset any FLOs (meh)
+            for value in cert_kwargs.values() + key_kwargs.values():
+                if hasattr(value, 'seek') and callable(value.seek):
+                    value.seek(0)
 
-    def test_load_cert_from_file_obj_with_key_password(self):
-        cert = RSACert(
-            filename=test_path('test_rsa_password.key'),
-            cert_file_obj=StringIO(PUB_RSA_CERT),
-            password='television',
-        )
-        self.assertEqual('ssh-rsa-cert-v01@openssh.com', cert.get_name())
-        self.assertEqual(
-            PUB_RSA.split()[1],
-            cert.get_public_key().get_base64(),
-        )
-        self.assertTrue(cert.verify_certificate_signature())
+    def test_implicit_cert_filename(self):
+        # TODO: instantiate with only filename= kwarg and assert that it loaded
+        # that name + -pub.cert
+        pass
+
+    def excepts_if_no_cert_data_available(self):
+        # TODO: no cert_filename _or_ cert_file_obj _or_ data kwargs
+        pass
+
+    def excepts_if_private_key_is_not_given(self):
+        # TODO: no filename or key
+        pass
+
+    def excepts_if_only_public_key_is_given(self):
+        # TODO: not 100% sure this should actually except tho
+        # TODO: but, data/filename/key are public-key material only, no
+        # private. In that case, why did the user bother? That should also be
+        # in the cert...
+        pass
+
+    def excepts_if_public_numbers_mismatch(self):
+        # TODO: given key isn't actually the match of the certified one!
+        pass
+
+    def excepts_if_cert_data_given_more_than_one_way(self):
+        # TODO: cert data given via both cert_filename and cert_file_obj, or
+        # via both msg and cert_filename, or any other combo
+        pass
 
     def test_sign(self):
         cert = RSACert(
