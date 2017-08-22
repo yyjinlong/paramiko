@@ -245,6 +245,12 @@ class AuthHandler (object):
             elif self.auth_method == 'publickey':
                 m.add_boolean(True)
                 m.add_string(self.private_key.get_name())
+                # NOTE: PKey.__str__ is expected to yield a binary Message
+                # containing public key components (or, in the case of a Cert
+                # style subclass, those plus the other parts of a cert, such as
+                # key identifier, nonce, validity constraints, etc).
+                # But, importantly: we're not actually sending any private key
+                # data here!
                 m.add_string(self.private_key)
                 blob = self._get_session_blob(
                     self.private_key, 'ssh-connection', self.username)
