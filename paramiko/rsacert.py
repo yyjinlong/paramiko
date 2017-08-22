@@ -58,10 +58,18 @@ class RSACert(RSAKey):
         must contain a full certificate and not just a public key.
 
     :param str pkey_filename:
-        Path to private key file.
+        Path to private key file. Maps to ``filename`` in `.RSAKey`.
 
     :param str pkey_file_obj:
-        File-like object containing private key text.
+        File-like object containing private key text. Maps to ``file_obj`` in
+        `.RSAKey`.
+
+    :param str password:
+        Password for unlocking an encrypted private key, if necessary.
+
+    :param key:
+        A manually-created key object (e.g. something created via the
+        Cryptography ``rsa`` module.) Only use if you know what you're doing!
 
     :param str cert_filename:
         Path to certificate file.
