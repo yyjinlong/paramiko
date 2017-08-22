@@ -15,8 +15,11 @@ from test_pkey import PUB_RSA, SIGNED_RSA
 from util import test_path
 
 
-with open(test_path('test_rsa-cert.pub')) as fd:
+CERT_PATH = test_path('test_rsa-cert.pub')
+with open(CERT_PATH) as fd:
     PUB_RSA_CERT = fd.read()
+KEY_PATH = test_path('test_rsa.key')
+PASSWORDED_KEY_PATH = test_path('test_rsa_password.key')
 
 
 class RSACertTests(unittest.TestCase):
@@ -25,23 +28,25 @@ class RSACertTests(unittest.TestCase):
         # instantiating the object re: cert and key sources. Corner cases get
         # their own tests below.
         cert_kwargses = [
-            dict(cert_filename=test_path('test_rsa-cert.pub')),
+            dict(cert_filename=CERT_PATH),
             dict(cert_file_obj=StringIO(PUB_RSA_CERT)),
             # TODO: msg=, data=
         ]
-        privkey_path = test_path('test_rsa.key')
         privkey_pass_path = test_path('test_rsa_password.key')
         key_kwargses = [
             # Unprotected private key
-            dict(pkey_filename=privkey_path),
-            dict(pkey_file_obj=open(privkey_path)),
+            dict(pkey_filename=KEY_PATH),
+            dict(pkey_file_obj=open(KEY_PATH)),
             # TODO: key=
             # Password-protected private key
-            dict(pkey_filename=privkey_pass_path, password='television'),
-            dict(pkey_file_obj=open(privkey_pass_path), password='television'),
+            dict(pkey_filename=PASSWORDED_KEY_PATH, password='television'),
+            dict(
+                pkey_file_obj=open(PASSWORDED_KEY_PATH),
+                password='television',
+            ),
         ]
         expected_pub_base64 = PUB_RSA.split()[1]
-        expected_privkey = RSAKey(filename=privkey_path)
+        expected_privkey = RSAKey(filename=KEY_PATH)
         for cert_kwargs, key_kwargs in product(cert_kwargses, key_kwargses):
             # Build from union of kwargs
             cert = RSACert(**dict(key_kwargs, **cert_kwargs))
