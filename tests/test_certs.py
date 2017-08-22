@@ -26,7 +26,7 @@ class RSACertTests(unittest.TestCase):
         cert_kwargses = [
             dict(cert_filename=test_path('test_rsa-cert.pub')),
             dict(cert_file_obj=StringIO(PUB_RSA_CERT)),
-            # TODO: msg, data, and key
+            # TODO: msg=, data=
         ]
         privkey_path = test_path('test_rsa.key')
         privkey_pass_path = test_path('test_rsa_password.key')
@@ -34,6 +34,7 @@ class RSACertTests(unittest.TestCase):
             # Unprotected private key
             dict(pkey_filename=privkey_path),
             dict(pkey_file_obj=open(privkey_path)),
+            # TODO: key=
             # Password-protected private key
             dict(pkey_filename=privkey_pass_path, password='television'),
             dict(pkey_file_obj=open(privkey_pass_path), password='television'),
@@ -71,14 +72,14 @@ class RSACertTests(unittest.TestCase):
         pass
 
     def excepts_if_private_key_is_not_given(self):
-        # TODO: no msg, data, pkey_filename or key
+        # TODO: no pkey_filename, pkey_file_obj, or key
         pass
 
     def excepts_if_only_public_key_is_given(self):
         # TODO: not 100% sure this should actually except tho
-        # TODO: but, data/pkey_filename/key are public-key material only, no
-        # private. In that case, why did the user bother? That should also be
-        # in the cert...
+        # TODO: but, pkey_filename/pkey_file_obj/key are public-key material
+        # only, no private. In that case, why did the user bother? That should
+        # also be in the cert...
         # TODO: anyway test would be if msg/data/pkey_filename/key are given,
         # but they only contain a public key
         pass
@@ -88,13 +89,13 @@ class RSACertTests(unittest.TestCase):
         pass
 
     def excepts_if_key_data_given_more_than_one_way(self):
-        # TODO: more than one of data, msg, pkey_filename or pkey_file_obj; all
+        # TODO: more than one of key, pkey_filename or pkey_file_obj; all
         # combos of these.
         pass
 
     def excepts_if_cert_data_given_more_than_one_way(self):
-        # TODO: cert data given via both cert_filename and cert_file_obj, or
-        # via both msg and cert_filename, or any other combo
+        # TODO: cert data given via more than one of cert_filename,
+        # cert_file_obj, msg, or data. All combos.
         pass
 
     def test_sign(self):
