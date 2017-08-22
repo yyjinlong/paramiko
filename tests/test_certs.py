@@ -7,7 +7,7 @@ from itertools import product
 from paramiko.py3compat import StringIO
 
 from cryptography.hazmat.primitives.asymmetric import rsa
-from paramiko import Message, RSAKey
+from paramiko import Message, RSAKey, SSHException
 from paramiko.py3compat import byte_chr
 from paramiko.rsacert import RSACert
 
@@ -68,15 +68,21 @@ class RSACertTests(unittest.TestCase):
         # loaded that name + -pub.cert
         pass
 
-    def excepts_if_no_cert_data_available(self):
-        # TODO: no cert_filename _or_ cert_file_obj _or_ data kwargs
-        pass
+    def test_excepts_if_no_cert_data_available(self):
+        try:
+            RSACert()
+        # TODO: custom exc subclass
+        except SSHException as e:
+            err = "Must provide data, msg, cert_filename or cert_file_obj!"
+            self.assertEqual(str(e), err)
+        else:
+            assert False, "Did not raise SSHException!"
 
-    def excepts_if_private_key_is_not_given(self):
+    def test_excepts_if_private_key_is_not_given(self):
         # TODO: no pkey_filename, pkey_file_obj, or key
         pass
 
-    def excepts_if_only_public_key_is_given(self):
+    def test_excepts_if_only_public_key_is_given(self):
         # TODO: not 100% sure this should actually except tho
         # TODO: but, pkey_filename/pkey_file_obj/key are public-key material
         # only, no private. In that case, why did the user bother? That should
@@ -85,16 +91,16 @@ class RSACertTests(unittest.TestCase):
         # but they only contain a public key
         pass
 
-    def excepts_if_public_numbers_mismatch(self):
+    def test_excepts_if_public_numbers_mismatch(self):
         # TODO: given key isn't actually the match of the certified one!
         pass
 
-    def excepts_if_key_data_given_more_than_one_way(self):
+    def test_excepts_if_key_data_given_more_than_one_way(self):
         # TODO: more than one of key, pkey_filename or pkey_file_obj; all
         # combos of these.
         pass
 
-    def excepts_if_cert_data_given_more_than_one_way(self):
+    def test_excepts_if_cert_data_given_more_than_one_way(self):
         # TODO: cert data given via more than one of cert_filename,
         # cert_file_obj, msg, or data. All combos.
         pass
@@ -131,7 +137,7 @@ class RSACertTests(unittest.TestCase):
             cert_without_private_key.get_public_key(),
         )
 
-    def vestigial_methods_raise_NotImplementedError(self):
+    def test_vestigial_methods_raise_NotImplementedError(self):
         # TODO: generate
         # TODO: from_private_key_file
         # TODO: from_private_key
