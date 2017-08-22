@@ -35,9 +35,17 @@ class RSACert(RSAKey):
     <https://www.digitalocean.com/community/tutorials/how-to-create-an-ssh-ca-to-validate-hosts-and-clients-with-ubuntu>`_.
 
     .. note::
-        For all parameters besides those documented here, see `.RSAKey`; they
-        are identical. Thus, ``filename`` and ``file_obj`` (for example) are
-        for private key data and **not** certificate data.
+        Certificate data *must* be provided (via ``msg``, ``data``,
+        ``cert_filename`` or ``cert_file_obj``) but private key data
+        (``pkey_filename``, ``pkey_file_obj``) is optional, as per above
+        discussion of use cases.
+
+    .. note::
+        Only one method of providing either the private key or certificate data
+        should be used; for example, providing both ``pkey_filename`` and
+        ``pkey_file_obj``, or providing both ``msg`` and ``cert_filename``,
+        may result in an error (`ZoP #12
+        <https://zen-of-python.info/in-the-face-of-ambiguity-refuse-the-temptation-to-guess.html#12>`_.)
 
     :param msg:
         A `.Message` object containing the certificate. Note that this
@@ -49,13 +57,17 @@ class RSACert(RSAKey):
         ``msg``, this overrides the ``data`` kwarg of the parent class, and
         must contain a full certificate and not just a public key.
 
+    :param str pkey_filename:
+        Path to private key file.
+
+    :param str pkey_file_obj:
+        File-like object containing private key text.
+
     :param str cert_filename:
-        Path to certificate file. Must be given if ``cert_file_obj`` is not
-        given.
+        Path to certificate file.
 
     :param str cert_file_obj:
-        File-like object containing certificate data. Must be given if
-        ``cert_filename`` is not given.
+        File-like object containing certificate data.
 
     .. versionadded:: 2.3
     """
@@ -63,10 +75,10 @@ class RSACert(RSAKey):
     def __init__(self,
         msg=None,
         data=None,
-        filename=None,
+        pkey_filename=None,
+        pkey_file_obj=None,
         password=None,
         key=None,
-        file_obj=None,
         cert_filename=None,
         cert_file_obj=None,
     ):
@@ -96,10 +108,12 @@ class RSACert(RSAKey):
                 'Either a data object or a certificate file must be given')
 
         # TODO: can't we defer most of this to parent
-        if file_obj is not None:
-            self._from_private_key(file_obj, password)
-        elif filename is not None:
-            self._from_private_key_file(filename, password)
+        if pkey_file_obj is not None:
+            self._from_private_key(pkey_file_obj, password)
+        elif pkey_filename is not None:
+            self._from_private_key_file(pkey_filename, password)
+
+        # TODO: utilize key= kwarg, set to self.key as in RSAKey
 
         # Normalize to a Message, since certificate files are by definition
         # stored in message format, even on-disk.
@@ -117,7 +131,7 @@ class RSACert(RSAKey):
 
         e = msg.get_mpint()
         n = msg.get_mpint()
-        # TODO: bail out if self.key was given & its public numbers != ours!
+        # TODO: bail out if self.key exists & its public numbers != ours!
         # Key might've been set by a private key file. If not, set it from the
         # cert
         if self.key is None:

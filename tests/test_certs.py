@@ -15,7 +15,7 @@ from test_pkey import PUB_RSA, SIGNED_RSA
 from util import test_path
 
 
-PUB_RSA_CERT = 'ssh-rsa-cert-v01@openssh.com AAAAHHNzaC1yc2EtY2VydC12MDFAb3BlbnNzaC5jb20AAAAgSMQNY/NloAtYIUsc0Hn+iESDMQSes4l6bLaQfZh5NxwAAAABIwAAAIEA049W6geFpmsljTwfvI1UmKWWJPNFI74+vNKTk4dmzkQY2yAMs6FhlvhlI8ysU4oj71ZsRYMecHbBbxdN79+JRFVYTKaLqjwGENeTd+yv4q+V2PvZv3fLnzApI3l7EJCqhWwJUHJ1jAkZzqDx0tyOL4uoZpww3nmE0kb3y21tH4cAAAAAAAAAAAAAAAEAAAANdXNlcl91c2VybmFtZQAAAAwAAAAIdXNlcm5hbWUAAAAAVWQGuAAAAABXQ+kGAAAAAAAAAIIAAAAVcGVybWl0LVgxMS1mb3J3YXJkaW5nAAAAAAAAABdwZXJtaXQtYWdlbnQtZm9yd2FyZGluZwAAAAAAAAAWcGVybWl0LXBvcnQtZm9yd2FyZGluZwAAAAAAAAAKcGVybWl0LXB0eQAAAAAAAAAOcGVybWl0LXVzZXItcmMAAAAAAAAAAAAAARcAAAAHc3NoLXJzYQAAAAMBAAEAAAEBAMpIMaZW0F/Fie0PcfMTQBZ902htZbGoszPpbGagDUUn7EcBXzbbwyTuSGHwbSsDvJW5JTNCpfJSsrcBDNY0XV5qpsLGE6DMLMAwWztwwrV/bbd2cjcVZJDAcH2S9YmGoscbjYD/FljjA5VYyI5VjYpMgRL1p+AqXOpl/PtQn09ZCrZ8dbPHhGBswFQww1GkOPUMP/iaoG+lwu7VmjhLi2Mf7TX1ce9B8T2VhTdQLtuR7S0jKaS7RgR7wdabAk6XzKJWhMyzXU7qsp9EdIr3axk27+lbj8nS2ya4wrwRMRacZRcvgWVFhh+EROp1DDWJcjVYJFMaeIu5MuUKrKtbVZ0AAAEPAAAAB3NzaC1yc2EAAAEAihMznF3UeBbQDWfh/yGHAk5QbK8cO1OVdenUgtxPpiYlqtc9jiqgSCDbBfZecAbNgpGACO1GamR8E2d3ZsEH+BRV6CWlL1/XMfatKREiseTh7BCyJetDTANbV9uuCqDrbt7r/V4uko61lJY+AaequSNNVVq5+7qhdpFH44TqXa0Yd7TMGU0Ss/Wsr+Mdpu1Bs5wDXWTrOsdDz5Ss66pd7eA14OZ/ihbJhMP7wPibqFi0B+wy2FlhZOShMmrDokjmRQkUzf3I0wir13hbF55AsofP+cEF4MZU/HE5yVbbTXdEXL5ry4B921QGvmLvCsL1ee2wTRWtbb4JRNNaIDg5HQ=='
+PUB_RSA_CERT = 'ssh-rsa-cert-v01@openssh.com AAAAHHNzaC1yc2EtY2VydC12MDFAb3BlbnNzaC5jb20AAAAgSMQNY/NloAtYIUsc0Hn+iESDMQSes4l6bLaQfZh5NxwAAAABIwAAAIEA049W6geFpmsljTwfvI1UmKWWJPNFI74+vNKTk4dmzkQY2yAMs6FhlvhlI8ysU4oj71ZsRYMecHbBbxdN79+JRFVYTKaLqjwGENeTd+yv4q+V2PvZv3fLnzApI3l7EJCqhWwJUHJ1jAkZzqDx0tyOL4uoZpww3nmE0kb3y21tH4cAAAAAAAAAAAAAAAEAAAANdXNlcl91c2VybmFtZQAAAAwAAAAIdXNlcm5hbWUAAAAAVWQGuAAAAABXQ+kGAAAAAAAAAIIAAAAVcGVybWl0LVgxMS1mb3J3YXJkaW5nAAAAAAAAABdwZXJtaXQtYWdlbnQtZm9yd2FyZGluZwAAAAAAAAAWcGVybWl0LXBvcnQtZm9yd2FyZGluZwAAAAAAAAAKcGVybWl0LXB0eQAAAAAAAAAOcGVybWl0LXVzZXItcmMAAAAAAAAAAAAAARcAAAAHc3NoLXJzYQAAAAMBAAEAAAEBAMpIMaZW0F/Fie0PcfMTQBZ902htZbGoszPpbGagDUUn7EcBXzbbwyTuSGHwbSsDvJW5JTNCpfJSsrcBDNY0XV5qpsLGE6DMLMAwWztwwrV/bbd2cjcVZJDAcH2S9YmGoscbjYD/FljjA5VYyI5VjYpMgRL1p+AqXOpl/PtQn09ZCrZ8dbPHhGBswFQww1GkOPUMP/iaoG+lwu7VmjhLi2Mf7TX1ce9B8T2VhTdQLtuR7S0jKaS7RgR7wdabAk6XzKJWhMyzXU7qsp9EdIr3axk27+lbj8nS2ya4wrwRMRacZRcvgWVFhh+EROp1DDWJcjVYJFMaeIu5MuUKrKtbVZ0AAAEPAAAAB3NzaC1yc2EAAAEAihMznF3UeBbQDWfh/yGHAk5QbK8cO1OVdenUgtxPpiYlqtc9jiqgSCDbBfZecAbNgpGACO1GamR8E2d3ZsEH+BRV6CWlL1/XMfatKREiseTh7BCyJetDTANbV9uuCqDrbt7r/V4uko61lJY+AaequSNNVVq5+7qhdpFH44TqXa0Yd7TMGU0Ss/Wsr+Mdpu1Bs5wDXWTrOsdDz5Ss66pd7eA14OZ/ihbJhMP7wPibqFi0B+wy2FlhZOShMmrDokjmRQkUzf3I0wir13hbF55AsofP+cEF4MZU/HE5yVbbTXdEXL5ry4B921QGvmLvCsL1ee2wTRWtbb4JRNNaIDg5HQ==' # noqa
 
 
 class RSACertTests(unittest.TestCase):
@@ -26,17 +26,17 @@ class RSACertTests(unittest.TestCase):
         cert_kwargses = [
             dict(cert_filename=test_path('test_rsa-cert.pub')),
             dict(cert_file_obj=StringIO(PUB_RSA_CERT)),
-            # TODO: msg and data
+            # TODO: msg, data, and key
         ]
         privkey_path = test_path('test_rsa.key')
         privkey_pass_path = test_path('test_rsa_password.key')
         key_kwargses = [
             # Unprotected private key
-            dict(filename=privkey_path),
-            dict(file_obj=open(privkey_path)),
+            dict(pkey_filename=privkey_path),
+            dict(pkey_file_obj=open(privkey_path)),
             # Password-protected private key
-            dict(filename=privkey_pass_path, password='television'),
-            dict(file_obj=open(privkey_pass_path), password='television'),
+            dict(pkey_filename=privkey_pass_path, password='television'),
+            dict(pkey_file_obj=open(privkey_pass_path), password='television'),
         ]
         expected_pub_base64 = PUB_RSA.split()[1]
         expected_privkey = RSAKey(filename=privkey_path)
@@ -62,8 +62,8 @@ class RSACertTests(unittest.TestCase):
                     value.seek(0)
 
     def test_implicit_cert_filename(self):
-        # TODO: instantiate with only filename= kwarg and assert that it loaded
-        # that name + -pub.cert
+        # TODO: instantiate with only pkey_filename= kwarg and assert that it
+        # loaded that name + -pub.cert
         pass
 
     def excepts_if_no_cert_data_available(self):
@@ -71,18 +71,25 @@ class RSACertTests(unittest.TestCase):
         pass
 
     def excepts_if_private_key_is_not_given(self):
-        # TODO: no filename or key
+        # TODO: no msg, data, pkey_filename or key
         pass
 
     def excepts_if_only_public_key_is_given(self):
         # TODO: not 100% sure this should actually except tho
-        # TODO: but, data/filename/key are public-key material only, no
+        # TODO: but, data/pkey_filename/key are public-key material only, no
         # private. In that case, why did the user bother? That should also be
         # in the cert...
+        # TODO: anyway test would be if msg/data/pkey_filename/key are given,
+        # but they only contain a public key
         pass
 
     def excepts_if_public_numbers_mismatch(self):
         # TODO: given key isn't actually the match of the certified one!
+        pass
+
+    def excepts_if_key_data_given_more_than_one_way(self):
+        # TODO: more than one of data, msg, pkey_filename or pkey_file_obj; all
+        # combos of these.
         pass
 
     def excepts_if_cert_data_given_more_than_one_way(self):
@@ -92,7 +99,7 @@ class RSACertTests(unittest.TestCase):
 
     def test_sign(self):
         cert = RSACert(
-            filename=test_path('test_rsa.key'),
+            pkey_filename=test_path('test_rsa.key'),
             cert_file_obj=StringIO(PUB_RSA_CERT),
         )
         msg = cert.sign_ssh_data(b'ice weasels')
@@ -109,7 +116,7 @@ class RSACertTests(unittest.TestCase):
 
     def test_compare_public_keys(self):
         cert_with_private_key = RSACert(
-            filename=test_path('test_rsa.key'),
+            pkey_filename=test_path('test_rsa.key'),
             cert_file_obj=StringIO(PUB_RSA_CERT),
         )
         cert_without_private_key = RSACert(
@@ -121,6 +128,12 @@ class RSACertTests(unittest.TestCase):
             cert_with_private_key.get_public_key(),
             cert_without_private_key.get_public_key(),
         )
+
+    def vestigial_methods_raise_NotImplementedError(self):
+        # TODO: generate
+        # TODO: from_private_key_file
+        # TODO: from_private_key
+        pass
 
 
 if __name__ == '__main__':
