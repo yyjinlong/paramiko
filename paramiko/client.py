@@ -316,6 +316,8 @@ class SSHClient (ClosingContextManager):
             for af, addr in to_try:
                 try:
                     sock = socket.socket(af, socket.SOCK_STREAM)
+                    # NOTE(TCP NODELAY handle)
+                    sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
                     if timeout is not None:
                         try:
                             sock.settimeout(timeout)
