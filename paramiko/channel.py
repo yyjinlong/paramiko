@@ -32,7 +32,7 @@ from paramiko import util
 from paramiko.common import (
     cMSG_CHANNEL_REQUEST, cMSG_CHANNEL_WINDOW_ADJUST, cMSG_CHANNEL_DATA,
     cMSG_CHANNEL_EXTENDED_DATA, DEBUG, ERROR, cMSG_CHANNEL_SUCCESS,
-    cMSG_CHANNEL_FAILURE, cMSG_CHANNEL_EOF, cMSG_CHANNEL_CLOSE,
+    cMSG_CHANNEL_FAILURE, cMSG_CHANNEL_EOF, cMSG_CHANNEL_CLOSE, io_sleep
 )
 from paramiko.message import Message
 from paramiko.py3compat import bytes_types
@@ -830,6 +830,10 @@ class Channel (ClosingContextManager):
         while s:
             sent = self.send(s)
             s = s[sent:]
+            # NOTE(SecureCRT terminal 'xxx bytes of data were dropped on local
+            # channel, because too much data was received on the channel before
+            # an acknowledgement could be sent')
+            time.sleep(io_sleep)
         return None
 
     def sendall_stderr(self, s):
