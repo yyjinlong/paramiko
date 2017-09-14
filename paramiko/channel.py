@@ -833,7 +833,7 @@ class Channel (ClosingContextManager):
             # NOTE(SecureCRT terminal 'xxx bytes of data were dropped on local
             # channel, because too much data was received on the channel before
             # an acknowledgement could be sent')
-            time.sleep(io_sleep)
+            #time.sleep(io_sleep)
         return None
 
     def sendall_stderr(self, s):
