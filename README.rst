@@ -39,6 +39,32 @@ The package and its API is fairly well documented in the ``docs`` folder that
 should have come with this repository.
 
 
+Modify
+-----
+
+NOTE
+
+    Based on paramiko-2.2.1 version to modified.
+
+Modify ssh client disable nagle on socket::
+
+    def connect(self, .....):
+        try:
+            sock = socket.socket(af, socket.SOCK_STREAM)
+            # NOTE(TCP NODELAY handle)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            if timeout is not None:
+                try:
+                    sock.settimeout(timeout)
+                except:
+                    pass
+            retry_on_signal(lambda: sock.connect(addr))
+            # Break out of the loop on success
+            break
+        except socket.error as e:
+            .......
+
+
 Installation
 ------------
 
