@@ -30,8 +30,8 @@ from hmac import HMAC
 
 from paramiko import util
 from paramiko.common import (
-    linefeed_byte, cr_byte_value, asbytes, MSG_NAMES, DEBUG, xffffffff,
-    zero_byte,
+    linefeed_byte, cr_byte_value, asbytes, MSG_NAMES, INFO, DEBUG,
+    xffffffff, zero_byte,
 )
 from paramiko.py3compat import u, byte_ord
 from paramiko.ssh_exception import SSHException, ProxyCommandFailure
@@ -348,6 +348,7 @@ class Packetizer (object):
         Read a line from the socket.  We assume no data is pending after the
         line, so it's okay to attempt large reads.
         """
+        self._log(INFO, '** packet readline timeout: %s' % timeout)
         buf = self.__remainder
         while linefeed_byte not in buf:
             buf += self._read_timeout(timeout)

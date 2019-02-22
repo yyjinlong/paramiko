@@ -393,7 +393,7 @@ class Transport(threading.Thread, ClosingContextManager):
         # user-defined event callbacks
         self.completion_event = None
         # how long (seconds) to wait for the SSH banner
-        self.banner_timeout = 15
+        self.banner_timeout = 3600
         # how long (seconds) to wait for the handshake to finish after SSH
         # banner sent.
         self.handshake_timeout = 15
@@ -407,6 +407,7 @@ class Transport(threading.Thread, ClosingContextManager):
         self.server_accepts = []
         self.server_accept_cv = threading.Condition(self.lock)
         self.subsystem_table = {}
+        self._log(INFO, '** transport banner_timeout: %s' % self.banner_timeout)
 
     def __repr__(self):
         """
