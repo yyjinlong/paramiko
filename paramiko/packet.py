@@ -526,11 +526,20 @@ class Packetizer (object):
             self.__keepalive_last = now
 
     def _read_timeout(self, timeout):
+        # NOTE(jinlong.yang) 设置该socket超时时间
+        self._log(INFO, '** read timeout: %s.' % timeout)
+        self.__socket.settimeout(timeout)
+
+        # NOTE(jinlong.yang) 设置该socket接收超时时间
+        timeval = struct.pack('ll', timeout, 0)
+        self.__socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVTIMEO, timeval)
+
         start = time.time()
         while True:
             try:
                 x = self.__socket.recv(128)
                 if len(x) == 0:
+                    self._log(INFO, '** recv body length is 0, raise EOFError.')
                     raise EOFError()
                 break
             except socket.timeout:

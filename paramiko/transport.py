@@ -1948,15 +1948,19 @@ class Transport(threading.Thread, ClosingContextManager):
         for i in range(100):
             # give them 15 seconds for the first line, then just 2 seconds
             # each additional line.  (some sites have very high latency.)
+            # NOTE(jinlong.yang): 对timeout均改成为self.banner_timeout
             if i == 0:
                 timeout = self.banner_timeout
             else:
-                timeout = 2
+                timeout = self.banner_timeout
+            self._log(INFO, '_check_banner timeout: ' + str(timeout))
             try:
                 buf = self.packetizer.readline(timeout)
             except ProxyCommandFailure:
                 raise
             except Exception as e:
+                import traceback
+                self._log(ERROR, traceback.format_exc())
                 raise SSHException(
                     'Error reading SSH protocol banner' + str(e)
                 )

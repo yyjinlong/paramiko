@@ -1,4 +1,5 @@
 *.pyc
+*.un~
 build/
 dist/
 .tox/

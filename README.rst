@@ -64,13 +64,20 @@ Modify ssh client disable nagle on socket::
         except socket.error as e:
             .......
 
+[SOLVE] Error reading SSH protocol banner:
+
+    transport.py
+    packet.py
+
+    具体修改: git log -p --color 进行查看.
+
 
 Installation
 ------------
 
 For most users, the recommended method to install is via pip::
 
-    pip install paramiko
+    pip install git+git://github.com/yyjinlong/paramiko.git#egg=paramiko
 
 For more detailed instructions, see the `Installing
 <http://www.paramiko.org/installing.html>`_ page on the main Paramiko website.
