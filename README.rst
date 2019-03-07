@@ -46,7 +46,8 @@ NOTE
 
     Based on paramiko-2.2.1 version to modified.
 
-Modify ssh client disable nagle on socket::
+
+1 Modify ssh client disable nagle on socket::
 
     def connect(self, .....):
         try:
@@ -64,16 +65,17 @@ Modify ssh client disable nagle on socket::
         except socket.error as e:
             .......
 
-[SOLVE] Error reading SSH protocol banner:
+2 SOLVE (Error reading SSH protocol banner)::
 
-    transport.py : 添加log, 记录各个timeout.
-    packet.py    : socket超时时间设置、recv超时时间设置.
+transport.py : 添加log, 记录各个timeout.
+packet.py    : socket超时时间设置、recv超时时间设置.
 
-    具体修改: git log -p --color 进行查看.
+具体修改: git log -p --color 进行查看.
 
-    究其原因: 是有ssh监控脚本引起的. 客户端建立socket后, 收到ssh server发给的包后, 应该再原封返回.
+究其原因: 是有ssh监控脚本引起的. 客户端建立socket后, 收到ssh server发给的包后, 应该再原封返回.
 
-    正确ssh监控客户端代码如下:
+正确ssh监控客户端代码如下::
+
 	import socket
 
 	fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
