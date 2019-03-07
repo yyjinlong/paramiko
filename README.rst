@@ -71,17 +71,23 @@ Modify ssh client disable nagle on socket::
 
     具体修改: git log -p --color 进行查看.
 
-    究其原因: 客户端建立socket后, 收到相同的包, 应该再返回相同的包.
+    究其原因: 是有ssh监控脚本引起的. 客户端建立socket后, 收到ssh server发给的包后, 应该再原封返回.
 
-    正确客户端代码如下:
+    正确ssh监控客户端代码如下:
 	import socket
 
 	fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	fd.settimeout(15)
-	fd.connect(('10.12.20.189', 2222))
-	r = fd.recv(1024)
-	fd.send(r) # NOTE(jinlong.yang) 原封回包才是关键
-	fd.close()
+	fd.connect(('10.12.20.189', 22))
+	try:
+		r = fd.recv(1024)
+		fd.send(r)
+		if r[:3] != 'SSH':
+			raise Exception(u'ssh协议不对!')
+	except:
+		raise Exception(u'ssh不通!')
+	finally:
+		fd.close()
 
 
 Installation
