@@ -393,7 +393,7 @@ class Transport(threading.Thread, ClosingContextManager):
         # user-defined event callbacks
         self.completion_event = None
         # how long (seconds) to wait for the SSH banner
-        self.banner_timeout = 3600
+        self.banner_timeout = 15
         # how long (seconds) to wait for the handshake to finish after SSH
         # banner sent.
         self.handshake_timeout = 15
@@ -407,7 +407,6 @@ class Transport(threading.Thread, ClosingContextManager):
         self.server_accepts = []
         self.server_accept_cv = threading.Condition(self.lock)
         self.subsystem_table = {}
-        self._log(INFO, '** transport banner_timeout: %s' % self.banner_timeout)
 
     def __repr__(self):
         """
@@ -1948,19 +1947,16 @@ class Transport(threading.Thread, ClosingContextManager):
         for i in range(100):
             # give them 15 seconds for the first line, then just 2 seconds
             # each additional line.  (some sites have very high latency.)
-            # NOTE(jinlong.yang): 对timeout均改成为self.banner_timeout
             if i == 0:
                 timeout = self.banner_timeout
             else:
-                timeout = self.banner_timeout
-            self._log(INFO, '_check_banner timeout: ' + str(timeout))
+                timeout = 2
+            self._log(INFO, '** _check_banner timeout: ' + str(timeout))
             try:
                 buf = self.packetizer.readline(timeout)
             except ProxyCommandFailure:
                 raise
             except Exception as e:
-                import traceback
-                self._log(ERROR, traceback.format_exc())
                 raise SSHException(
                     'Error reading SSH protocol banner' + str(e)
                 )

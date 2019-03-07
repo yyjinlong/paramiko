@@ -66,10 +66,22 @@ Modify ssh client disable nagle on socket::
 
 [SOLVE] Error reading SSH protocol banner:
 
-    transport.py
-    packet.py
+    transport.py : 添加log, 记录各个timeout.
+    packet.py    : socket超时时间设置、recv超时时间设置.
 
     具体修改: git log -p --color 进行查看.
+
+    究其原因: 客户端建立socket后, 收到相同的包, 应该再返回相同的包.
+
+    正确客户端代码如下:
+	import socket
+
+	fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	fd.settimeout(15)
+	fd.connect(('10.12.20.189', 2222))
+	r = fd.recv(1024)
+	fd.send(r) # NOTE(jinlong.yang) 原封回包才是关键
+	fd.close()
 
 
 Installation
