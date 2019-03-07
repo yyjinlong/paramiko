@@ -76,8 +76,8 @@ packet.py    : socket超时时间设置、recv超时时间设置.
 究其原因: 是有ssh监控脚本引起的. 客户端建立socket后, 收到ssh server发给的包后, 应该再原封返回.
 
 正确ssh监控客户端代码如下::
-
-	import socket
+	
+   	import socket
 
 	fd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	fd.settimeout(15)
@@ -90,7 +90,7 @@ packet.py    : socket超时时间设置、recv超时时间设置.
 	except:
 		raise Exception(u'ssh不通!')
 	finally:
-		fd.close()
+		fd.close() 
 
 
 Installation
