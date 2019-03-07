@@ -81,7 +81,7 @@ Modify ssh client disable nagle on socket::
 	fd.connect(('10.12.20.189', 22))
 	try:
 		r = fd.recv(1024)
-		fd.send(r)
+		fd.send(r) # NOTE(jinlong.yang) 原封回包才是关键
 		if r[:3] != 'SSH':
 			raise Exception(u'ssh协议不对!')
 	except:
