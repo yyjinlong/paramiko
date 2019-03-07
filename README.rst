@@ -68,6 +68,7 @@ NOTE
 2 SOLVE (Error reading SSH protocol banner)::
 
 transport.py : 添加log, 记录各个timeout.
+
 packet.py    : socket超时时间设置、recv超时时间设置.
 
 具体修改: git log -p --color 进行查看.
